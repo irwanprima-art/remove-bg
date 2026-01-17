@@ -1,2 +1,5 @@
 # Ignore environment
-*/
+env/
+images/
+remove-bg/
+single-remove-bg/
