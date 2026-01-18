@@ -122,7 +122,7 @@ function FileCard({ file }: { file: FileWithProgress }) {
 
             {/* Footer */}
             <div className="flex items-center justify-between border-t bg-background/50 px-2 py-1.5">
-                <p className="max-w-[100px] truncate text-xs text-muted-foreground">
+                <p className="max-w-25 truncate text-xs text-muted-foreground">
                     {file.file.name}
                 </p>
 
@@ -155,7 +155,7 @@ export function MultipleImagesTab() {
         isProcessing,
         globalProgress,
         addFiles,
-        removeFile,
+        // removeFile,
         processAllImages,
         reset,
     } = useRemoveBgMultiple()

@@ -76,7 +76,7 @@ export function UploadArea({
         >
             <label
                 className={cn(
-                    "relative flex min-h-[240px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed transition-all duration-300",
+                    "relative flex min-h-60 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed transition-all duration-300",
                     isDragging
                         ? "border-primary bg-primary/5 scale-[1.02]"
                         : "border-muted-foreground/25 hover:border-primary/50 hover:bg-muted/50",
