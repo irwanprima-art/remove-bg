@@ -1,84 +1,94 @@
-# Background Remover
+# Background Remover Web App
 
-A GPU-accelerated background removal tool using [InSPyReNet](https://github.com/plemeri/InSPyReNet) via the `transparent-background` package.
+A full-stack web application for removing image backgrounds using [rembg](https://github.com/danielgatis/rembg). This project consists of a Next.js frontend and a Flask backend.
 
 ## Features
 
-- 🚀 GPU acceleration with CUDA
-- 🖼️ Batch processing of images
-- 🔍 High-quality background removal using InSPyReNet model
-- 📁 Outputs PNG with transparent alpha channel
-
-## Requirements
-
-- Python 3.10+
-- NVIDIA GPU with CUDA support
-
-## Installation
-
-1. **Create virtual environment**
-   ```bash
-   python -m venv env
-   ```
-
-2. **Activate environment**
-   ```bash
-   # Windows
-   .\env\Scripts\activate
-   
-   # Linux/Mac
-   source env/bin/activate
-   ```
-
-3. **Install PyTorch with CUDA**
-   ```bash
-   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
-   ```
-
-4. **Install transparent-background**
-   ```bash
-   pip install transparent-background
-   ```
-
-5. **Install Jupyter (optional)**
-   ```bash
-   pip install jupyter
-   ```
-
-## Usage
-
-1. Place your images in the `images/` folder
-2. Run the notebook `main.ipynb`
-3. Processed images with transparent backgrounds will be saved to `remove-bg/`
-
-### Quick Start
-
-```python
-from transparent_background import Remover
-from PIL import Image
-
-remover = Remover()
-img = Image.open("your_image.jpg").convert("RGB")
-result = remover.process(img, type='rgba')
-result.save("output.png")
-```
+- 🎨 **Modern UI**: built with Next.js and Shadcn UI.
+- 🚀 **Real-time Preview**: Uses Blob URLs for instant "Before" image preview.
+- 🖼️ **High-Quality Removal**: Powered by `rembg`.
+- 📁 **Processed Image Serving**: Backend serves processed images directly from the `outputs` directory.
 
 ## Project Structure
 
 ```
 remove-bg/
-├── images/           # Input images
-├── remove-bg/        # Output images (transparent PNG)
-├── main.ipynb        # Main processing notebook
-└── README.md
+├── backend/            # Flask server
+│   ├── app/            # Application logic
+│   ├── outputs/        # Processed images
+│   ├── uploads/        # Temporary uploads
+│   └── main.py         # Entry point
+└── frontend/           # Next.js client
+    ├── app/            # Pages and layouts
+    └── components/     # UI Components
 ```
 
-## Performance
+## Requirements
 
-| GPU | Images | Time |
-|-----|--------|------|
-| RTX 4050 Laptop | 28 images | ~27 seconds |
+- Python 3.10+
+- Node.js 18+
+- CUDA Toolkit 12.x (for GPU acceleration)
 
-## License
+> [!IMPORTANT]
+> **GPU Acceleration Note**
+> The underlying `onnxruntime-gpu` library requires **CUDA Toolkit 12.x**. If you have **CUDA Toolkit 13.x** installed, the application will default to **CPU processing**, which may be slower.
 
-MIT
+## Troubleshooting
+
+### CUDA Version Mismatch
+If you encounter the following error, it is due to a mismatch between the installed CUDA version (files usually found in `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.x`) and the version required by `onnxruntime` (v12.x).
+
+```
+[E:onnxruntime:Default, provider_bridge_ort.cc:2251 onnxruntime::TryGetProviderInfo_CUDA] ... onnxruntime::ProviderLibrary::Get [ONNXRuntimeError] : 1 : FAIL : Error loading "...\site-packages\onnxruntime\capi\onnxruntime_providers_cuda.dll" which depends on "cublasLt64_12.dll" which is missing. (Error 126: "The specified module could not be found.")
+```
+
+**Solution:**
+Currently, the system successfully falls back to CPU processing. To enable GPU acceleration, you would need to install CUDA Toolkit 12.x.
+
+## Installation & Setup
+
+### Backend
+
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+2. Create and activate a virtual environment:
+   ```bash
+   python -m venv env
+   # Windows
+   .\env\Scripts\activate
+   ```
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Run the server:
+   ```bash
+   python main.py
+   ```
+   The backend will start on `http://localhost:5000`.
+
+### Frontend
+
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+   The frontend will be available at `http://localhost:3000`.
+
+## Usage
+
+1. Open `http://localhost:3000` in your browser.
+2. Upload an image in the "Single Image" tab.
+3. The original image is shown instantly (via Blob).
+4. Click "Remove Background" to process.
+5. The result is fetched from the backend (`http://localhost:5000/outputs/...`) and displayed.
