@@ -72,7 +72,7 @@ export default function Home() {
             <footer className="border-t py-6">
                 <div className="container mx-auto px-4">
                     <p className="text-center text-sm text-muted-foreground">
-                        Powered by AI background removal technology
+                        Powered by aleedoe dev
                     </p>
                 </div>
             </footer>
