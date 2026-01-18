@@ -114,7 +114,7 @@ export function SingleImageTab() {
                         className="space-y-4"
                     >
                         <ResultPreview
-                            original={result.original}
+                            original={previewUrl!}
                             processed={result.processed}
                             filename={result.filename}
                         />

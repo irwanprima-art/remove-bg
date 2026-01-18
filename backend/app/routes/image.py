@@ -32,8 +32,8 @@ def remove_bg():
             # Assuming the frontend can access these via a static route or similar mechanism.
             # For now, returning existing local paths as requested.
             results.append({
-                "original": input_path,
-                "processed": output_path,
+                "original": file.filename, # Only filename, frontend uses blob
+                "processed": f"http://localhost:5000/outputs/{os.path.basename(output_path)}",
                 "filename": os.path.basename(output_path)
             })
         except Exception as e:
