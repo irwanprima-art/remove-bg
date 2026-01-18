@@ -1,0 +1,8 @@
+flask
+flask-cors
+rembg
+pillow
+torch
+torchvision
+torchaudio
+requests
