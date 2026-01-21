@@ -1,4 +1,5 @@
 # app.py
+import os
 from flask import Flask, jsonify
 from flask_cors import CORS
 from config import MAX_FILE_SIZE, setup_folders
@@ -6,7 +7,14 @@ from app.routes.image import image_bp
 from app.routes.general import general_bp
 
 app = Flask(__name__)
-CORS(app)
+
+# CORS configuration - allow frontend origins
+CORS(app, origins=[
+    "http://localhost:3111",
+    "http://localhost:3000",
+    "https://remove-bg.xzi.my.id",
+], supports_credentials=True)
+
 app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
 setup_folders()
 
