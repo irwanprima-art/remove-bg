@@ -9,6 +9,9 @@ from app.service import remove_background
 # Definisikan Blueprint
 image_bp = Blueprint('image_bp', __name__)
 
+# Base URL for output files - configurable via environment variable
+BASE_URL = os.environ.get('BASE_URL', 'http://localhost:5111')
+
 @image_bp.route("/remove-bg", methods=["POST"])
 def remove_bg():
     if "images" not in request.files:
@@ -28,12 +31,10 @@ def remove_bg():
             
             output_path = remove_background(input_path, OUTPUT_DIR)
             
-            # Construct a relative URL or path for the frontend
-            # Assuming the frontend can access these via a static route or similar mechanism.
-            # For now, returning existing local paths as requested.
+            # Construct URL using configurable BASE_URL
             results.append({
                 "original": file.filename, # Only filename, frontend uses blob
-                "processed": f"http://localhost:5000/outputs/{os.path.basename(output_path)}",
+                "processed": f"{BASE_URL}/outputs/{os.path.basename(output_path)}",
                 "filename": os.path.basename(output_path)
             })
         except Exception as e:
@@ -43,3 +44,4 @@ def remove_bg():
             })
 
     return jsonify({"results": results})
+

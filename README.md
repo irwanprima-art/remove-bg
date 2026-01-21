@@ -36,6 +36,7 @@ remove-bg/
 ## Troubleshooting
 
 ### CUDA Version Mismatch
+
 If you encounter the following error, it is due to a mismatch between the installed CUDA version (files usually found in `C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.x`) and the version required by `onnxruntime` (v12.x).
 
 ```
@@ -67,7 +68,7 @@ Currently, the system successfully falls back to CPU processing. To enable GPU a
    ```bash
    python main.py
    ```
-   The backend will start on `http://localhost:5000`.
+   The backend will start on `http://localhost:5111`.
 
 ### Frontend
 
@@ -83,12 +84,59 @@ Currently, the system successfully falls back to CPU processing. To enable GPU a
    ```bash
    npm run dev
    ```
-   The frontend will be available at `http://localhost:3000`.
+   The frontend will be available at `http://localhost:3111`.
 
 ## Usage
 
-1. Open `http://localhost:3000` in your browser.
+1. Open `http://localhost:3111` in your browser.
 2. Upload an image in the "Single Image" tab.
 3. The original image is shown instantly (via Blob).
 4. Click "Remove Background" to process.
-5. The result is fetched from the backend (`http://localhost:5000/outputs/...`) and displayed.
+5. The result is fetched from the backend (`http://localhost:5111/outputs/...`) and displayed.
+
+## Docker Deployment
+
+### Quick Start with Docker Compose
+
+1. Make sure Docker and Docker Compose are installed on your system.
+
+2. Build and run the containers:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+3. Access the application:
+   - Frontend: `http://localhost:3111`
+   - Backend API: `http://localhost:5111`
+
+### Production Deployment
+
+For production, you may want to configure the API URL:
+
+```bash
+# Build with custom API URL
+docker-compose build --build-arg NEXT_PUBLIC_API_URL=https://api.yourdomain.com
+docker-compose up -d
+```
+
+### Individual Container Builds
+
+**Backend:**
+
+```bash
+cd backend
+docker build -t bg-remover-backend .
+docker run -p 5111:5000 bg-remover-backend
+```
+
+**Frontend:**
+
+```bash
+cd frontend
+docker build -t bg-remover-frontend --build-arg NEXT_PUBLIC_API_URL=http://localhost:5111 .
+docker run -p 3111:3000 bg-remover-frontend
+```
+
+> [!NOTE]
+> The Docker containers run with CPU processing by default. For GPU acceleration with NVIDIA CUDA, you'll need to use `nvidia-docker` and modify the backend Dockerfile to use a CUDA base image.

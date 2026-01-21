@@ -23,7 +23,9 @@ export interface FileWithProgress {
     error?: string
 }
 
-const API_ENDPOINT = "http://localhost:5000/api/remove-bg"
+const API_ENDPOINT = process.env.NEXT_PUBLIC_API_URL 
+    ? `${process.env.NEXT_PUBLIC_API_URL}/api/remove-bg`
+    : "http://localhost:5111/api/remove-bg"
 
 export function useRemoveBg() {
     const [isLoading, setIsLoading] = useState(false)
@@ -58,7 +60,7 @@ export function useRemoveBg() {
             if (response.data.results && response.data.results.length > 0) {
                 setResult(response.data.results[0])
             }
-        } catch (err) {
+        } catch (err: unknown) {
             if (axios.isAxiosError(err)) {
                 setError(err.response?.data?.message || err.message || "Failed to process image")
             } else {
@@ -99,16 +101,16 @@ export function useRemoveBgMultiple() {
             progress: 0,
             status: "idle" as const,
         }))
-        setFiles((prev) => [...prev, ...filesWithProgress])
+        setFiles((prev: FileWithProgress[]) => [...prev, ...filesWithProgress])
     }, [])
 
     const removeFile = useCallback((id: string) => {
-        setFiles((prev) => {
-            const file = prev.find((f) => f.id === id)
+        setFiles((prev: FileWithProgress[]) => {
+            const file = prev.find((f: FileWithProgress) => f.id === id)
             if (file) {
                 URL.revokeObjectURL(file.preview)
             }
-            return prev.filter((f) => f.id !== id)
+            return prev.filter((f: FileWithProgress) => f.id !== id)
         })
     }, [])
 
@@ -119,13 +121,13 @@ export function useRemoveBgMultiple() {
         setGlobalProgress(0)
 
         const formData = new FormData()
-        files.forEach((fileItem) => {
+        files.forEach((fileItem: FileWithProgress) => {
             formData.append("images", fileItem.file)
         })
 
         // Set all files to uploading
-        setFiles((prev) =>
-            prev.map((f) => ({ ...f, status: "uploading" as const, progress: 0 }))
+        setFiles((prev: FileWithProgress[]) =>
+            prev.map((f: FileWithProgress) => ({ ...f, status: "uploading" as const, progress: 0 }))
         )
 
         try {
@@ -139,8 +141,8 @@ export function useRemoveBgMultiple() {
                             (progressEvent.loaded * 100) / progressEvent.total
                         )
                         setGlobalProgress(percentCompleted)
-                        setFiles((prev) =>
-                            prev.map((f) => ({ ...f, progress: percentCompleted }))
+                        setFiles((prev: FileWithProgress[]) =>
+                            prev.map((f: FileWithProgress) => ({ ...f, progress: percentCompleted }))
                         )
                     }
                 },
@@ -148,8 +150,8 @@ export function useRemoveBgMultiple() {
 
             // Map results back to files
             if (response.data.results) {
-                setFiles((prev) =>
-                    prev.map((f, index) => {
+                setFiles((prev: FileWithProgress[]) =>
+                    prev.map((f: FileWithProgress, index: number) => {
                         const result = response.data.results[index]
                         if (result) {
                             return {
@@ -167,13 +169,13 @@ export function useRemoveBgMultiple() {
                     })
                 )
             }
-        } catch (err) {
+        } catch (err: unknown) {
             const errorMessage = axios.isAxiosError(err)
                 ? err.response?.data?.message || err.message || "Failed to process images"
                 : "An unexpected error occurred"
 
-            setFiles((prev) =>
-                prev.map((f) => ({
+            setFiles((prev: FileWithProgress[]) =>
+                prev.map((f: FileWithProgress) => ({
                     ...f,
                     status: "error" as const,
                     error: errorMessage,
@@ -185,14 +187,14 @@ export function useRemoveBgMultiple() {
     }, [files])
 
     const reset = useCallback(() => {
-        files.forEach((f) => URL.revokeObjectURL(f.preview))
+        files.forEach((f: FileWithProgress) => URL.revokeObjectURL(f.preview))
         setFiles([])
         setIsProcessing(false)
         setGlobalProgress(0)
     }, [files])
 
     const clearCompleted = useCallback(() => {
-        setFiles((prev) => prev.filter((f) => f.status !== "success"))
+        setFiles((prev: FileWithProgress[]) => prev.filter((f: FileWithProgress) => f.status !== "success"))
     }, [])
 
     return {

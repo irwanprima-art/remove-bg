@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+env/
+venv/
+.venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Uploads and outputs (will be mounted as volumes)
+uploads/
+outputs/
+
+# Git
+.git/
+.gitignore
+
+# Logs
+*.log
+
+# Local development
+*.local

@@ -1,0 +1,43 @@
+# Docker Compose for Background Remover App
+# Usage: docker-compose up --build
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5111:5000"
+    volumes:
+      # Persist processed images
+      - backend_outputs:/app/outputs
+      - backend_uploads:/app/uploads
+    environment:
+      - FLASK_ENV=production
+      - BASE_URL=https://bg-api.xzi.my.id
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Production API URL
+        NEXT_PUBLIC_API_URL: https://bg-api.xzi.my.id
+    ports:
+      - "3111:3000"
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+
+volumes:
+  backend_outputs:
+  backend_uploads:
